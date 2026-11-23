@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E.E. Dom Miguel — Boletim Escolar Online</title>
+<meta name="description" content="Portal de notas da Escola Estadual Dom Miguel: alunos e responsáveis acompanham boletins bimestrais, médias por disciplina e situação escolar em tempo real.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 4 L90 18 V46 C90 74 74 92 50 98 C26 92 10 74 10 46 V18 Z' fill='%230e3b2c' stroke='%23c9a227' stroke-width='6'/><text x='50' y='62' font-size='38' text-anchor='middle' fill='%23f7f3e9' font-family='Georgia,serif' font-weight='bold'>DM</text></svg>">
+<style>
+:root{
+  --green:#0e3b2c; --green-deep:#082a1f; --green-soft:#17573f; --green-faint:#e9efe7;
+  --cream:#f7f3e9; --paper:#fffdf6; --gold:#c9a227; --gold-soft:#e7cf8a; --ink:#1d2a22;
+  --red:#b3402f; --red-bg:#f7e4e0; --amber:#a96f0a; --amber-bg:#f8eed3; --ok:#1e6f45; --ok-bg:#e2f0e6;
+  --shadow:0 10px 30px rgba(8,42,31,.18); --radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased}
+.serif{font-family:Georgia,"Iowan Old Style",serif}
+.hidden{display:none !important}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:6px}
+
+/* ============ LOGIN ============ */
+#screen-login{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr}
+.brand{background:radial-gradient(1200px 700px at 15% 10%, #1a5138 0%, var(--green) 45%, var(--green-deep) 100%);color:var(--cream);display:flex;flex-direction:column;justify-content:space-between;padding:56px 64px;position:relative;overflow:hidden}
+.brand::after{content:"";position:absolute;width:520px;height:520px;border:1px solid rgba(233,207,138,.25);border-radius:50%;right:-180px;bottom:-180px}
+.brand::before{content:"";position:absolute;width:340px;height:340px;border:1px solid rgba(233,207,138,.18);border-radius:50%;right:-80px;bottom:-80px}
+.brand-top{display:flex;align-items:center;gap:14px;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-soft)}
+.brand-top .dot{width:9px;height:9px;border-radius:50%;background:var(--gold)}
+.brand-mid{max-width:520px;position:relative;z-index:1}
+.school-over{font-size:.85rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:18px}
+.school-name{font-size:clamp(3rem,6vw,4.6rem);line-height:1.02;font-weight:700;letter-spacing:-.01em}
+.school-name em{font-style:italic;color:var(--gold-soft)}
+.gold-rule{width:96px;height:3px;background:linear-gradient(90deg,var(--gold),transparent);margin:28px 0;border-radius:2px}
+.brand-quote{font-size:1.12rem;line-height:1.65;color:#d8e4d9;max-width:44ch}
+.brand-bottom{display:flex;gap:28px;font-size:.78rem;color:#9db8a6;position:relative;z-index:1;flex-wrap:wrap}
+.brand-bottom span{display:flex;align-items:center;gap:8px}
+.brand-bottom b{color:var(--cream);font-weight:600}
+
+.login-panel{display:flex;align-items:center;justify-content:center;padding:40px 28px;background:
+  radial-gradient(900px 500px at 110% -10%, rgba(201,162,39,.14), transparent 55%), var(--cream)}
+.login-card{background:var(--paper);border:1px solid rgba(14,59,44,.12);box-shadow:var(--shadow);border-radius:var(--radius);width:100%;max-width:430px;padding:38px 36px 30px}
+.login-card h1{font-size:1.65rem;color:var(--green);margin-bottom:6px;letter-spacing:-.01em}
+.login-card .sub{font-size:.92rem;color:#5a6b5f;margin-bottom:26px;line-height:1.5}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.field input{width:100%;padding:13px 14px;font-size:1rem;border:1.6px solid #d8d2c0;border-radius:12px;background:#fff;color:var(--ink);transition:border-color .18s, box-shadow .18s;font-family:inherit}
+.field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(14,59,44,.14);outline:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:none;border-radius:12px;font-size:1rem;font-weight:700;padding:14px 18px;width:100%;transition:transform .15s, box-shadow .15s, filter .15s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--green);color:var(--cream);box-shadow:0 6px 16px rgba(14,59,44,.35)}
+.btn-primary:hover{filter:brightness(1.12)}
+.btn-ghost{background:transparent;color:var(--green);border:1.6px solid rgba(14,59,44,.35);margin-top:12px}
+.btn-ghost:hover{background:var(--green-faint)}
+.divider{display:flex;align-items:center;gap:12px;margin:22px 0 4px;color:#8a8f7d;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:#ddd6c4}
+.login-error{background:var(--red-bg);color:var(--red);border:1px solid rgba(179,64,47,.35);border-radius:10px;padding:11px 13px;font-size:.88rem;line-height:1.45;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+.login-foot{margin-top:22px;font-size:.78rem;color:#7c8270;text-align:center;line-height:1.6}
+.demo-hint{margin-top:14px;background:#f2eedd;border:1px dashed #c9c2a2;border-radius:10px;padding:10px 12px;font-size:.78rem;color:#6b6647;line-height:1.55}
+.demo-hint code{background:#fff;border:1px solid #ddd6c4;border-radius:5px;padding:0 6px;font-size:.75rem}
+
+/* ============ DASHBOARD ============ */
+#screen-app{min-height:100vh}
+.topbar{background:linear-gradient(180deg,var(--green-deep),var(--green));border-bottom:3px solid var(--gold);color:var(--cream);position:sticky;top:0;z-index:20}
+.topbar-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:12px 22px}
+.topbar .tt{display:flex;flex-direction:column;line-height:1.15}
+.topbar .tt b{font-size:1.02rem;letter-spacing:.06em}
+.topbar .tt small{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-soft)}
+.topbar-spacer{flex:1}
+.year-badge{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#cfe3d2;border:1px solid rgba(233,207,138,.45);padding:6px 12px;border-radius:999px;white-space:nowrap}
+.user-chip{display:flex;align-items:center;gap:10px;padding:5px 14px 5px 6px;background:rgba(247,243,233,.08);border:1px solid rgba(247,243,233,.15);border-radius:999px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--gold);color:var(--green-deep);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.user-chip .who{display:flex;flex-direction:column;line-height:1.2}
+.user-chip .who b{font-size:.82rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-chip .who small{font-size:.68rem;color:#b9cfc0}
+.icon-btn{background:rgba(247,243,233,.08);border:1px solid rgba(247,243,233,.18);color:var(--cream);width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.icon-btn:hover{background:rgba(247,243,233,.18)}
+.demo-strip{background:#efe6bd;color:#6b5a12;font-size:.78rem;text-align:center;padding:7px 14px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;border-bottom:1px solid #dccf96}
+.demo-strip select{font:inherit;padding:4px 8px;border-radius:8px;border:1px solid #c9b96f;background:#fffdf0;color:#57490e}
+
+.page{max-width:1180px;margin:0 auto;padding:28px 22px 60px}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:22px;flex-wrap:wrap}
+.hero-row h2{font-size:clamp(1.5rem,3vw,2.1rem);color:var(--green);letter-spacing:-.01em}
+.hero-row p{color:#5a6b5f;font-size:.9rem;margin-top:5px}
+.tabs{display:flex;gap:8px;background:#e9e5d3;padding:6px;border-radius:14px;flex-wrap:wrap}
+.tab{border:none;background:transparent;color:#5c584a;font-weight:700;font-size:.83rem;padding:9px 15px;border-radius:10px;transition:all .18s}
+.tab:hover{color:var(--green)}
+.tab.active{background:var(--green);color:var(--cream);box-shadow:0 3px 8px rgba(14,59,44,.35)}
+
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+.card{background:var(--paper);border:1px solid rgba(14,59,44,.1);border-radius:var(--radius);box-shadow:0 4px 14px rgba(8,42,31,.07);padding:22px}
+.card-title{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:#8a8f7d;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+/* ring card */
+.ring-card{grid-column:span 4;display:flex;flex-direction:column;align-items:center;text-align:center}
+.ring-wrap{position:relative;width:170px;height:170px;margin:8px auto 4px}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{stroke:#e7e2cd}
+.ring-val{stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-center b{font-size:2.35rem;color:var(--green);letter-spacing:-.02em}
+.ring-center small{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:#8a8f7d;margin-top:2px}
+.ring-scope{font-size:.8rem;color:#6d7a6e;margin-top:10px}
+
+/* bimester bars */
+.bars-card{grid-column:span 8}
+.bar-row{display:grid;grid-template-columns:88px 1fr 52px;align-items:center;gap:14px;margin:15px 0}
+.bar-row .lbl{font-size:.86rem;font-weight:700;color:var(--green)}
+.bar-track{height:16px;background:#ece7d2;border-radius:999px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--green-soft),var(--green));border-radius:999px;width:0;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.bar-fill.gold{background:linear-gradient(90deg,#d9b545,var(--gold))}
+.bar-val{font-variant-numeric:tabular-nums;font-weight:800;color:var(--green);text-align:right;font-size:.95rem}
+
+/* mini stats */
+.mini{grid-column:span 3;display:flex;flex-direction:column;gap:6px;min-height:128px}
+.mini .big{font-size:1.6rem;color:var(--green);letter-spacing:-.01em;line-height:1.1}
+.mini .foot{font-size:.78rem;color:#7c8270}
+.pill{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:.78rem;padding:6px 12px;border-radius:999px;letter-spacing:.02em}
+.pill .pdot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.warn{background:var(--amber-bg);color:var(--amber)}
+.pill.bad{background:var(--red-bg);color:var(--red)}
+
+/* table */
+.boletim-card{grid-column:span 12;padding:0;overflow:hidden}
+.boletim-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 24px;border-bottom:1px solid #e8e3cf;background:linear-gradient(180deg,#fffdf6,#faf7ea);flex-wrap:wrap}
+.boletim-head h3{font-size:1.15rem;color:var(--green)}
+.boletim-head p{font-size:.78rem;color:#7c8270;margin-top:2px}
+.legend{display:flex;gap:12px;font-size:.72rem;color:#6d7a6e;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:6px}
+.lg{width:11px;height:11px;border-radius:3px}
+.lg.ok{background:var(--ok)} .lg.warn{background:var(--gold)} .lg.bad{background:var(--red)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+thead th{background:var(--green);color:var(--cream);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;padding:13px 14px;text-align:center;font-weight:700}
+thead th:first-child{text-align:left;padding-left:24px}
+tbody td{padding:12px 14px;border-bottom:1px solid #eee9d8;text-align:center;font-variant-numeric:tabular-nums}
+tbody tr:nth-child(even){background:#fcfaf0}
+tbody tr:last-child td{border-bottom:none}
+td.disc{text-align:left;padding-left:24px;font-weight:700;color:var(--green)}
+.gcell{display:inline-flex;align-items:center;justify-content:center;min-width:44px;padding:5px 9px;border-radius:8px;font-weight:700}
+.gcell.ok{background:var(--ok-bg);color:var(--ok)}
+.gcell.warn{background:var(--amber-bg);color:var(--amber)}
+.gcell.bad{background:var(--red-bg);color:var(--red)}
+.gcell.empty{color:#b6b199;background:#f2efe2;font-weight:600}
+td.media{font-weight:800;color:var(--green);font-size:1rem}
+col.hl, th.hl, td.hl{background:rgba(201,162,39,.14)}
+thead th.hl{background:#1b4d38;box-shadow:inset 0 -3px 0 var(--gold)}
+td .mini-bar{height:6px;border-radius:999px;background:#e7e2cd;overflow:hidden;margin:6px 0 0;min-width:110px}
+td .mini-bar i{display:block;height:100%;background:var(--green);border-radius:999px}
+
+.foot-note{margin-top:26px;font-size:.75rem;color:#8a8f7d;text-align:center;line-height:1.7}
+.loading{display:flex;align-items:center;justify-content:center;gap:14px;padding:70px 20px;color:#6d7a6e;font-size:.95rem}
+.spinner{width:26px;height:26px;border:3px solid #dcd6c0;border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.print-header{display:none}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1024px){
+  .ring-card{grid-column:span 5}.bars-card{grid-column:span 7}.mini{grid-column:span 6}
+}
+@media (max-width:860px){
+  #screen-login{grid-template-columns:1fr}
+  .brand{display:none}
+  .ring-card,.bars-card{grid-column:span 12}
+  .topbar .tt small{display:none}
+  .user-chip .who{display:none}
+  .year-badge{display:none}
+}
+@media (max-width:560px){.mini{grid-column:span 12}.tabs{width:100%}.tab{flex:1;text-align:center;padding:9px 6px}}
+
+/* ============ PRINT (boletim) ============ */
+@media print{
+  body{background:#fff}
+  .no-print,.topbar,.demo-strip,.hero-row,.foot-note,.ring-card,.bars-card,.mini,.grid>.card:not(.boletim-card){display:none !important}
+  .page{padding:0;max-width:none}
+  .grid{display:block}
+  .print-header{display:flex;align-items:center;gap:16px;border-bottom:3px double var(--green);padding-bottom:12px;margin-bottom:16px}
+  .print-header .ph-t b{font-size:1.3rem;color:var(--green)}
+  .print-header .ph-t small{display:block;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#555}
+  .boletim-card{box-shadow:none;border:1px solid #bbb;border-radius:0}
+  .boletim-head{background:#fff}
+  thead th{background:#0e3b2c !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .gcell{border:1px solid #ddd}
+  @page{size:A4 portrait;margin:14mm}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════ TELA DE LOGIN ════════════ -->
+<section id="screen-login" class="screen-only">
+  <aside class="brand">
+    <div class="brand-top"><span class="dot"></span> Secretaria Escolar Digital</div>
+    <div class="brand-mid">
+      <svg width="120" height="132" viewBox="0 0 100 110" role="img" aria-label="Brasão da E.E. Dom Miguel" style="margin-bottom:26px">
+        <path d="M50 2 L94 17 V48 C94 78 76 99 50 108 C24 99 6 78 6 48 V17 Z" fill="#c9a227"/>
+        <path d="M50 7.5 L88.5 21.5 V48 C88.5 75.4 72 94.7 50 103 C28 94.7 11.5 75.4 11.5 48 V21.5 Z" fill="#0e3b2c"/>
+        <path d="M50 34 L52.4 41.3 L60.2 41.4 L54 46 56.3 53.5 50 49 43.7 53.5 46 46 39.8 41.4 47.6 41.3 Z" fill="#c9a227"/>
+        <text x="50" y="78" font-family="Georgia,serif" font-size="24" font-weight="bold" fill="#f7f3e9" text-anchor="middle" letter-spacing="2">DM</text>
+      </svg>
+      <div class="school-over">Escola Estadual</div>
+      <h1 class="school-name serif">Dom<br><em>Miguel</em></h1>
+      <div class="gold-rule"></div>
+      <p class="brand-quote">Um lugar onde cada nota conta uma história de esforço. Acompanhe a jornada de aprendizagem dos nossos estudantes, bimestre a bimestre.</p>
+    </div>
+    <div class="brand-bottom">
+      <span><b>1968</b> ensino fundamental</span>
+      <span><b>9</b>º ano · Ensino Fundamental II</span>
+      <span>Ano letivo <b>2026</b></span>
+    </div>
+  </aside>
+
+  <div class="login-panel">
+    <form class="login-card" id="login-form" novalidate>
+      <h1 class="serif">Entrar no Boletim</h1>
+      <p class="sub">Alunos e responsáveis: acesse com a <b>matrícula</b> e a senha fornecida pela secretaria da escola.</p>
+
+      <div class="login-error hidden" id="login-error" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v6M12 16.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span id="login-error-text"></span>
+      </div>
+
+      <div class="field">
+        <label for="f-matricula">Matrícula</label>
+        <input id="f-matricula" name="matricula" inputmode="numeric" autocomplete="username" placeholder="Ex.: 2026001" required>
+      </div>
+      <div class="field">
+        <label for="f-senha">Senha</label>
+        <input id="f-senha" name="senha" type="password" autocomplete="current-password" placeholder="Sua senha" required minlength="6">
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="btn-entrar">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Entrar
+      </button>
+
+      <div class="divider">ou</div>
+      <button type="button" class="btn btn-ghost" id="btn-demo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3h6M10 3v6.3L4.8 17a2 2 0 0 0 1.9 2.6h10.6a2 2 0 0 0 1.9-2.6L14 9.3V3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 14h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Ver demonstração
+      </button>
+
+      <div class="demo-hint">Ambiente de testes da escola — matrículas de <code>2026001</code> a <code>2026006</code>, senha <code>dom2026</code>. Nenhuma nota exibida na demonstração é real.</div>
+      <p class="login-foot">Não consegue entrar? Procure a <b>secretaria</b> em dias letivos, das 08h às 17h.</p>
+    </form>
+  </div>
+</section>
+
+<!-- ════════════ APP / BOLETIM ════════════ -->
+<section id="screen-app" class="hidden">
+  <header class="topbar no-print">
+    <div class="topbar-inner">
+      <svg width="42" height="46" viewBox="0 0 100 110" aria-hidden="true">
+        <path d="M50 2 L94 17 V48 C94 78 76 99 50 108 C24 99 6 78 6 48 V17 Z" fill="#c9a227"/>
+        <path d="M50 7.5 L88.5 21.5 V48 C88.5 75.4 72 94.7 50 103 C28 94.7 11.5 75.4 11.5 48 V21.5 Z" fill="#0e3b2c"/>
+        <path d="M50 34 L52.4 41.3 L60.2 41.4 L54 46 56.3 53.5 50 49 43.7 53.5 46 46 39.8 41.4 47.6 41.3 Z" fill="#c9a227"/>
+        <text x="50" y="78" font-family="Georgia,serif" font-size="24" font-weight="bold" fill="#f7f3e9" text-anchor="middle" letter-spacing="2">DM</text>
+      </svg>
+      <div class="tt"><b>E.E. DOM MIGUEL</b><small>Secretaria Escolar</small></div>
+      <div class="topbar-spacer"></div>
+      <span class="year-badge">Ano letivo 2026</span>
+      <div class="user-chip">
+        <span class="avatar" id="chip-initials">--</span>
+        <span class="who"><b id="chip-name">—</b><small id="chip-meta">—</small></span>
+      </div>
+      <button class="icon-btn" id="btn-print" title="Imprimir boletim" aria-label="Imprimir boletim">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M6 9V3h12v6M6 18H3v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6h-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 14h12v7H6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-logout" title="Sair" aria-label="Sair">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="demo-strip hidden" id="demo-strip">
+      <strong>MODO DEMONSTRAÇÃO</strong> — dados fictícios para apresentação
+      <label>Aluno:
+        <select id="demo-select"></select>
+      </label>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="print-header" id="print-header">
+      <svg width="64" height="70" viewBox="0 0 100 110" aria-hidden="true"><path d="M50 2 L94 17 V48 C94 78 76 99 50 108 C24 99 6 78 6 48 V17 Z" fill="#0e3b2c"/><path d="M50 34 L52.4 41.3 L60.2 41.4 L54 46 56.3 53.5 50 49 43.7 53.5 46 46 39.8 41.4 47.6 41.3 Z" fill="#c9a227"/><text x="50" y="78" font-family="Georgia,serif" font-size="24" font-weight="bold" fill="#f7f3e9" text-anchor="middle" letter-spacing="2">DM</text></svg>
+      <div class="ph-t"><b>ESCOLA ESTADUAL DOM MIGUEL</b><small>Boletim Escolar · Ano letivo 2026 · Documento gerado eletronicamente</small><span id="print-student" style="font-size:.9rem;color:#222"></span></div>
+    </div>
+
+    <div class="hero-row no-print">
+      <div>
+        <h2 class="serif">Boletim de <span id="hero-name">—</span></h2>
+        <p><span id="hero-turma">—</span> · Matrícula <span id="hero-matricula">—</span> · Responsável: <span id="hero-resp">—</span></p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Selecionar período">
+        <button class="tab active" role="tab" data-scope="geral">Média anual</button>
+        <button class="tab" role="tab" data-scope="1">1º Bim.</button>
+        <button class="tab" role="tab" data-scope="2">2º Bim.</button>
+        <button class="tab" role="tab" data-scope="3">3º Bim.</button>
+        <button class="tab" role="tab" data-scope="4">4º Bim.</button>
+      </div>
+    </div>
+
+    <div class="loading" id="loading"><div class="spinner"></div> Carregando notas…</div>
+
+    <div class="grid hidden" id="dashboard">
+      <!-- anel média -->
+      <div class="card ring-card no-print">
+        <div class="card-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Média <span id="ring-scope-label">anual</span>
+        </div>
+        <div class="ring-wrap">
+          <svg width="170" height="170" viewBox="0 0 170 170">
+            <circle class="ring-bg" cx="85" cy="85" r="66" stroke-width="15" fill="none"/>
+            <circle class="ring-val" id="ring-circle" cx="85" cy="85" r="66" stroke-width="15" fill="none" stroke-dasharray="414.7" stroke-dashoffset="414.7"/>
+          </svg>
+          <div class="ring-center"><b id="ring-number">–</b><small>de 10,0</small></div>
+        </div>
+        <div class="ring-scope" id="ring-sub">—</div>
+      </div>
+
+      <!-- desempenho por bimestre -->
+      <div class="card bars-card no-print">
+        <div class="card-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Desempenho por bimestre
+        </div>
+        <div id="bim-bars"></div>
+        <p style="font-size:.75rem;color:#8a8f7d;margin-top:6px">Média do aluno em todas as disciplinas, por bimestre. A linha de aprovação é <b>6,0</b>.</p>
+      </div>
+
+      <!-- mini stats -->
+      <div class="card mini no-print">
+        <div class="card-title">Situação <span id="sit-scope">geral</span></div>
+        <span class="pill ok" id="stat-situacao"><span class="pdot"></span><span id="stat-situacao-txt">—</span></span>
+        <div class="foot" id="stat-situacao-sub">Média mínima para aprovação: 6,0</div>
+      </div>
+      <div class="card mini no-print">
+        <div class="card-title">Disciplinas aprovadas</div>
+        <div class="big"><span id="stat-apr">–</span><span style="font-size:1rem;color:#8a8f7d"> / 8</span></div>
+        <div class="foot" id="stat-apr-sub">com média ≥ 6,0 no recorte selecionado</div>
+      </div>
+      <div class="card mini no-print">
+        <div class="card-title">Destaque</div>
+        <div class="big" id="stat-best" style="font-size:1.15rem">—</div>
+        <div class="foot">Média <b id="stat-best-n">–</b> no recorte selecionado</div>
+      </div>
+      <div class="card mini no-print">
+        <div class="card-title">Atenção</div>
+        <div class="big" id="stat-worst" style="font-size:1.15rem">—</div>
+        <div class="foot">Média <b id="stat-worst-n">–</b> — converse com o professor</div>
+      </div>
+
+      <!-- boletim -->
+      <div class="card boletim-card">
+        <div class="boletim-head">
+          <div>
+            <h3 class="serif">Boletim Escolar 2026</h3>
+            <p>Notas lançadas pela coordenação pedagógica · Portaria de avaliação nº 04/2026</p>
+          </div>
+          <div class="legend no-print">
+            <span><i class="lg ok"></i> ≥ 6,0 aprovado</span>
+            <span><i class="lg warn"></i> 5,0–5,9 recuperação</span>
+            <span><i class="lg bad"></i> &lt; 5,0 reprovado</span>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="grades-table" aria-label="Boletim por disciplina">
+            <thead>
+              <tr>
+                <th>Disciplina</th><th data-bim="1">1º Bim</th><th data-bim="2">2º Bim</th><th data-bim="3">3º Bim</th><th data-bim="4">4º Bim</th><th>Média</th><th>Situação</th>
+              </tr>
+            </thead>
+            <tbody id="grades-body"></tbody>
+            <tfoot id="grades-foot"></tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <p class="foot-note no-print">E.E. Dom Miguel · Rua das Palmeiras, s/nº — Secretaria Escolar<br>Documento eletrônico. Em caso de divergência, procure a secretaria com este boletim em até 10 dias úteis.</p>
+  </main>
+</section>
+
+<script>
+"use strict";
+/* =====================================================================
+   E.E. DOM MIGUEL — Boletim Escolar
+   Modo AO VIVO  : Supabase (Auth REST + PostgREST REST, sem libs)
+   Modo DEMO     : dados fictícios embutidos (funciona offline)
+   ===================================================================== */
+
+const SUPABASE_URL  = 'https://isifjakipozugexdevne.supabase.co';
+const SUPABASE_KEY  = 'sb_publishable_Efpy6Mx0HwqtWH9TgANbuQ_qjmvJkok';
+const EMAIL_DOMAIN  = '@alunos.eedommiguel.com.br';
+const SESSION_KEY   = 'dm_session_v1';
+const DEMO_KEY      = 'dm_demo_student_v1';
+const MIN_APPROVAL  = 6.0, MIN_RECOVERY = 5.0;
+
+/* ---------- Dados de demonstração (espelho do seed do banco) -------- */
+const DISCIPLINAS = ['Língua Portuguesa','Matemática','História','Geografia','Ciências','Língua Inglesa','Arte','Educação Física'];
+const DEMO_STUDENTS = [
+  {matricula:'2026001', nome:'Ana Beatriz Silva',     turma:'9º Ano A', responsavel:'Marta Silva',     notas:[[9.0,8.3,9.2,7.2,8.4],[9.6,7.5,9.3,7.6,8.5],[7.8,8.7,8.2,7.7,8.1],[9.6,7.8,7.7,9.6,8.7],[8.5,7.8,9.4,8.0,8.4],[8.7,8.1,8.5,7.5,8.2],[8.6,9.6,9.5,9.0,9.2],[8.1,9.3,7.8,8.2,8.4]]},
+  {matricula:'2026002', nome:'Carlos Eduardo Souza',  turma:'9º Ano A', responsavel:'José Souza',      notas:[[5.5,5.6,6.8,6.7,6.2],[6.9,6.3,7.1,6.3,6.7],[5.1,5.0,5.4,6.0,5.4],[6.8,6.3,6.9,4.8,6.2],[6.9,5.3,6.6,7.2,6.5],[4.8,6.8,6.3,4.7,5.7],[6.4,6.0,5.5,7.0,6.2],[7.1,5.0,5.7,5.6,5.9]]},
+  {matricula:'2026003', nome:'Mariana Oliveira Santos',turma:'9º Ano A', responsavel:'Beatriz Oliveira',notas:[[8.3,7.3,6.1,6.9,7.2],[8.3,6.5,7.9,8.2,7.7],[6.3,5.8,5.8,8.4,6.6],[6.7,8.0,7.2,5.9,7.0],[8.3,6.1,8.4,8.1,7.7],[8.0,5.8,8.2,7.2,7.3],[8.1,7.3,6.8,6.4,7.2],[8.2,7.5,7.5,6.4,7.4]]},
+  {matricula:'2026004', nome:'João Pedro Ferreira',   turma:'9º Ano B', responsavel:'Luciana Ferreira',notas:[[5.4,7.3,5.8,6.1,6.2],[6.2,6.3,5.7,5.3,5.9],[7.8,6.6,7.7,5.5,6.9],[6.2,7.0,7.0,7.0,6.8],[5.6,6.9,7.8,6.8,6.8],[6.5,7.9,7.6,7.9,7.5],[7.7,6.4,7.0,6.3,6.9],[5.6,7.5,7.4,5.8,6.6]]},
+  {matricula:'2026005', nome:'Laura Fernandes Costa', turma:'9º Ano B', responsavel:'Roberto Costa',   notas:[[7.9,9.2,8.5,8.8,8.6],[9.0,8.4,9.9,8.0,8.8],[7.9,10.0,7.7,8.4,8.5],[8.5,9.2,8.2,9.9,9.0],[8.2,9.2,10.0,10.0,9.4],[9.0,8.1,9.1,9.8,9.0],[8.9,10.0,8.3,8.1,8.8],[8.3,10.0,8.7,10.0,9.3]]},
+  {matricula:'2026006', nome:'Pedro Henrique Almeida',turma:'9º Ano B', responsavel:'Sandra Almeida',  notas:[[4.1,6.2,5.9,4.8,5.3],[5.3,3.9,3.6,3.9,4.2],[4.5,5.6,4.5,4.6,4.8],[4.0,5.2,4.9,5.6,4.9],[3.9,4.5,4.1,5.1,4.4],[5.2,4.8,5.7,5.4,5.3],[6.0,4.9,4.7,4.7,5.1],[5.0,5.6,4.3,5.5,5.1]]}
+];
+
+/* ---------- Estado -------------------------------------------------- */
+const state = {
+  mode: null,            // 'live' | 'demo'
+  session: null,         // {access_token, refresh_token, expires_at, user:{id}}
+  profile: null,         // {matricula, nome, turma, responsavel}
+  rows: [],              // [{disciplina, bim:[b1..b4], media}]
+  scope: 'geral'         // 'geral' | '1'..'4'
+};
+
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+const fmt = n => (n == null || isNaN(n)) ? '–' : Number(n).toFixed(1).replace('.', ',');
+const avg = arr => arr.reduce((a,b)=>a+b,0) / arr.length;
+const initials = n => n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const gradeClass = v => v >= MIN_APPROVAL ? 'ok' : (v >= MIN_RECOVERY ? 'warn' : 'bad');
+const situacaoOf = v => v >= MIN_APPROVAL ? {cls:'ok', txt:'Aprovado'} : (v >= MIN_RECOVERY ? {cls:'warn', txt:'Recuperação'} : {cls:'bad', txt:'Reprovado'});
+
+/* =====================================================================
+   AUTENTICAÇÃO (Supabase Auth REST)
+   ===================================================================== */
+async function authSignIn(matricula, password){
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: matricula.trim() + EMAIL_DOMAIN, password })
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = (body && (body.error_description || body.msg || body.error)) || '';
+    if (/invalid/i.test(msg)) throw new Error('Matrícula ou senha incorretos. Confira os dados ou procure a secretaria.');
+    throw new Error(msg || 'Não foi possível entrar agora. Tente novamente em instantes.');
+  }
+  return {
+    access_token: body.access_token,
+    refresh_token: body.refresh_token,
+    expires_at: Date.now() + (body.expires_in || 3600) * 1000,
+    user: body.user
+  };
+}
+
+async function authRefresh(refresh_token){
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token })
+  });
+  if (!res.ok) throw new Error('Sessão expirada');
+  const body = await res.json();
+  return {
+    access_token: body.access_token,
+    refresh_token: body.refresh_token,
+    expires_at: Date.now() + (body.expires_in || 3600) * 1000,
+    user: body.user
+  };
+}
+
+async function restGet(path, token){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` }
+  });
+  if (res.status === 401) { const e = new Error('unauthorized'); e.code = 401; throw e; }
+  if (!res.ok) throw new Error('Falha ao consultar o banco de notas (' + res.status + ').');
+  return res.json();
+}
+
+async function loadLiveData(){
+  // garante token válido
+  if (state.session.expires_at - Date.now() < 60000) {
+    state.session = await authRefresh(state.session.refresh_token);
+    saveSession(state.session);
+  }
+  const token = state.session.access_token;
+  const uid = state.session.user.id;
+  const [perfil] = await restGet(`perfis?select=matricula,nome,responsavel,turmas(nome)&id=eq.${uid}`, token);
+  if (!perfil) throw new Error('Perfil de aluno não encontrado para esta conta.');
+  const notas = await restGet(`notas?select=bimestre,nota,disciplinas(nome,ordem)&aluno_id=eq.${uid}&order=disciplinas(ordem)`, token);
+
+  state.profile = { matricula: perfil.matricula, nome: perfil.nome, turma: perfil.turmas ? perfil.turmas.nome : '—', responsavel: perfil.responsavel || '—' };
+  const map = new Map();
+  for (const n of notas) {
+    const nome = n.disciplinas.nome, ordem = n.disciplinas.ordem;
+    if (!map.has(nome)) map.set(nome, { disciplina: nome, ordem, bim: [null,null,null,null] });
+    map.get(nome).bim[n.bimestre - 1] = Number(n.nota);
+  }
+  state.rows = [...map.values()].sort((a,b) => a.ordem - b.ordem)
+    .map(r => ({ ...r, media: avg(r.bim.filter(v => v != null)) }));
+}
+
+function loadDemoData(matricula){
+  const s = DEMO_STUDENTS.find(d => d.matricula === matricula) || DEMO_STUDENTS[0];
+  state.profile = { matricula: s.matricula, nome: s.nome, turma: s.turma, responsavel: s.responsavel };
+  state.rows = DISCIPLINAS.map((d, i) => {
+    const [b1,b2,b3,b4,m] = s.notas[i];
+    return { disciplina: d, ordem: i + 1, bim: [b1,b2,b3,b4], media: m };
+  });
+}
+
+function saveSession(s){ localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
+function clearSession(){ localStorage.removeItem(SESSION_KEY); localStorage.removeItem(DEMO_KEY); }
+
+/* =====================================================================
+   RENDERIZAÇÃO
+   ===================================================================== */
+function scopeValue(row){ return state.scope === 'geral' ? row.media : row.bim[Number(state.scope) - 1]; }
+function scopeValuesAll(){ return state.rows.map(scopeValue).filter(v => v != null); }
+function bimesterAverage(i){ const vs = state.rows.map(r => r.bim[i]).filter(v => v != null); return vs.length ? avg(vs) : null; }
+
+function render(){
+  const p = state.profile;
+  $('#hero-name').textContent = p.nome.split(' ')[0];
+  $('#hero-turma').textContent = p.turma;
+  $('#hero-matricula').textContent = p.matricula;
+  $('#hero-resp').textContent = p.responsavel;
+  $('#chip-name').textContent = p.nome;
+  $('#chip-meta').textContent = `${p.turma} · Mat. ${p.matricula}`;
+  $('#chip-initials').textContent = initials(p.nome);
+  $('#print-student').textContent = `${p.nome} — ${p.turma} · Matrícula ${p.matricula} · Responsável: ${p.responsavel}`;
+
+  // anel + escopo
+  const vals = scopeValuesAll();
+  const scopeAvg = vals.length ? avg(vals) : 0;
+  const scopeLabel = state.scope === 'geral' ? 'anual' : `${state.scope}º bimestre`;
+  $('#ring-scope-label').textContent = scopeLabel;
+  $('#ring-number').textContent = fmt(scopeAvg);
+  $('#ring-sub').textContent = state.scope === 'geral'
+    ? 'Média de todas as disciplinas no ano'
+    : `Média de todas as disciplinas no ${state.scope}º bimestre`;
+  const C = 2 * Math.PI * 66;
+  $('#ring-circle').style.strokeDashoffset = String(C * (1 - Math.min(scopeAvg, 10) / 10));
+
+  // barras por bimestre
+  $('#bim-bars').innerHTML = [0,1,2,3].map(i => {
+    const m = bimesterAverage(i);
+    const pct = m == null ? 0 : (m / 10) * 100;
+    const gold = m != null && m >= MIN_APPROVAL;
+    return `<div class="bar-row"><span class="lbl">${i+1}º Bimestre</span>
+      <div class="bar-track"><div class="bar-fill ${gold ? 'gold' : ''}" data-w="${pct.toFixed(1)}"></div></div>
+      <span class="bar-val">${fmt(m)}</span></div>`;
+  }).join('');
+  requestAnimationFrame(() => $$('#bim-bars .bar-fill').forEach(el => el.style.width = el.dataset.w + '%'));
+
+  // mini stats
+  const sit = situacaoOf(scopeAvg);
+  const pill = $('#stat-situacao');
+  pill.className = 'pill ' + sit.cls;
+  $('#stat-situacao-txt').textContent = sit.txt;
+  $('#sit-scope').textContent = state.scope === 'geral' ? 'geral' : `no ${state.scope}º bimestre`;
+  $('#stat-situacao-sub').textContent = `Média ${fmt(scopeAvg)} no recorte · aprovação exige 6,0`;
+  const aprovadas = vals.filter(v => v >= MIN_APPROVAL).length;
+  $('#stat-apr').textContent = aprovadas;
+  $('#stat-apr-sub').textContent = `de ${vals.length} disciplinas com média ≥ 6,0`;
+  const best = state.rows.reduce((a,b) => scopeValue(b) > scopeValue(a) ? b : a);
+  const worst = state.rows.reduce((a,b) => scopeValue(b) < scopeValue(a) ? b : a);
+  $('#stat-best').textContent = best.disciplina;
+  $('#stat-best-n').textContent = fmt(scopeValue(best));
+  $('#stat-worst').textContent = worst.disciplina;
+  $('#stat-worst-n').textContent = fmt(scopeValue(worst));
+
+  // tabela
+  $('#grades-body').innerHTML = state.rows.map(r => {
+    const cells = r.bim.map((v, i) => {
+      const hl = String(state.scope) === String(i + 1) ? ' hl' : '';
+      return v == null
+        ? `<td class="${hl.trim()}"><span class="gcell empty">–</span></td>`
+        : `<td class="${hl.trim()}"><span class="gcell ${gradeClass(v)}">${fmt(v)}</span></td>`;
+    }).join('');
+    const s = situacaoOf(r.media);
+    const barPct = Math.min(100, (r.media / 10) * 100).toFixed(1);
+    return `<tr>
+      <td class="disc">${esc(r.disciplina)}<span class="mini-bar"><i style="width:${barPct}%;background:${r.media >= MIN_APPROVAL ? 'var(--green)' : (r.media >= MIN_RECOVERY ? 'var(--gold)' : 'var(--red)')}"></i></span></td>
+      ${cells}
+      <td class="media">${fmt(r.media)}</td>
+      <td><span class="pill ${s.cls}" style="font-size:.72rem;padding:5px 11px"><span class="pdot"></span>${s.txt}</span></td>
+    </tr>`;
+  }).join('');
+
+  // rodapé da tabela: médias por bimestre + geral
+  const bimMeans = [0,1,2,3].map(bimesterAverage);
+  const geral = avg(state.rows.map(r => r.media));
+  $('#grades-foot').innerHTML = `<tr style="background:#f3efe0;font-weight:800;color:var(--green)">
+      <td class="disc" style="padding-left:24px">Média da turma de disciplinas</td>
+      ${bimMeans.map((m,i) => `<td class="${String(state.scope)===String(i+1)?'hl':''}">${fmt(m)}</td>`).join('')}
+      <td>${fmt(geral)}</td><td></td></tr>`;
+
+  // destaca coluna do bimestre selecionado no cabeçalho
+  $$('#grades-table thead th[data-bim]').forEach(th => th.classList.toggle('hl', th.dataset.bim === String(state.scope)));
+
+  $('#loading').classList.add('hidden');
+  $('#dashboard').classList.remove('hidden');
+}
+
+function setLoading(on){
+  $('#loading').classList.toggle('hidden', !on);
+  $('#dashboard').classList.toggle('hidden', on);
+}
+
+async function showApp(){
+  $('#screen-login').classList.add('hidden');
+  $('#screen-app').classList.remove('hidden');
+  $('#demo-strip').classList.toggle('hidden', state.mode !== 'demo');
+  setLoading(true);
+  if (state.mode === 'demo') loadDemoData(localStorage.getItem(DEMO_KEY) || '2026001');
+  else await loadLiveData();
+  render();
+}
+
+function backToLogin(){
+  clearSession();
+  state.mode = null; state.session = null; state.profile = null; state.rows = []; state.scope = 'geral';
+  $('#screen-app').classList.add('hidden');
+  $('#screen-login').classList.remove('hidden');
+  $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.scope === 'geral'));
+  $('#f-senha').value = '';
+}
+
+function demoStripInit(){
+  const sel = $('#demo-select');
+  if (sel.options.length) return;
+  for (const s of DEMO_STUDENTS) {
+    const opt = document.createElement('option');
+    opt.value = s.matricula; opt.textContent = `${s.matricula} — ${s.nome}`;
+    sel.appendChild(opt);
+  }
+  sel.value = localStorage.getItem(DEMO_KEY) || '2026001';
+  sel.addEventListener('change', async () => {
+    localStorage.setItem(DEMO_KEY, sel.value);
+    setLoading(true);
+    loadDemoData(sel.value);
+    render();
+  });
+}
+
+/* =====================================================================
+   EVENTOS
+   ===================================================================== */
+$('#login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const errBox = $('#login-error'), errTxt = $('#login-error-text'), btn = $('#btn-entrar');
+  errBox.classList.add('hidden');
+  const matricula = $('#f-matricula').value.trim(), senha = $('#f-senha').value;
+  if (!matricula || senha.length < 6) {
+    errTxt.textContent = 'Informe a matrícula e uma senha com ao menos 6 caracteres.';
+    errBox.classList.remove('hidden'); return;
+  }
+  btn.disabled = true; btn.style.opacity = .75;
+  try {
+    state.session = await authSignIn(matricula, senha);
+    state.mode = 'live';
+    saveSession(state.session);
+    await showApp();
+  } catch (err) {
+    const friendly = (err instanceof TypeError)
+      ? 'Sem conexão com o servidor. Verifique a internet — ou toque em “Ver demonstração”.'
+      : err.message;
+    errTxt.textContent = friendly;
+    errBox.classList.remove('hidden');
+  } finally {
+    btn.disabled = false; btn.style.opacity = 1;
+  }
+});
+
+$('#btn-demo').addEventListener('click', async () => {
+  state.mode = 'demo';
+  localStorage.setItem(DEMO_KEY, localStorage.getItem(DEMO_KEY) || '2026001');
+  demoStripInit();
+  $('#demo-select').value = localStorage.getItem(DEMO_KEY);
+  await showApp();
+});
+
+$('#btn-logout').addEventListener('click', backToLogin);
+$('#btn-print').addEventListener('click', () => window.print());
+
+$$('.tab').forEach(tab => tab.addEventListener('click', () => {
+  state.scope = tab.dataset.scope;
+  $$('.tab').forEach(t => t.classList.toggle('active', t === tab));
+  if (state.rows.length) render();
+}));
+
+/* ---------- Restauração de sessão ao abrir --------------------------- */
+(async function boot(){
+  const savedDemo = localStorage.getItem(DEMO_KEY);
+  demoStripInit();
+  const raw = localStorage.getItem(SESSION_KEY);
+  if (raw) {
+    try {
+      state.session = JSON.parse(raw);
+      state.mode = 'live';
+      await showApp();
+      return;
+    } catch { clearSession(); }
+  }
+  // sem sessão: se o visitante já estava na demo, retoma a demo
+  if (savedDemo) { state.mode = 'demo'; await showApp(); return; }
+})();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5f0d780eec69ddf',t:'MTc5NTQ0MzkxMQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5f0d780eec69ddf',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
